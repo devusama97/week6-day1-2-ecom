@@ -10,19 +10,44 @@ import Footer from '../../../components/common/Footer';
 export default function CheckoutSuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const orderId = searchParams.get('orderId');
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
     if (sessionId) {
       fetchSession();
+    } else if (orderId) {
+      // If we have orderId, update order status to confirmed
+      updateOrderStatus();
+      setLoading(false);
     }
-  }, [sessionId]);
+  }, [sessionId, orderId]);
+
+  const updateOrderStatus = async () => {
+    try {
+      // Call API to confirm order payment
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/confirm-payment`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
 
   const fetchSession = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stripe/session?session_id=${sessionId}`);
-      const sessionData = await response.json();
+      const responseData = await response.json();
+      
+      // Handle wrapped response from ResponseInterceptor
+      const sessionData = responseData.data || responseData;
+      console.log('Session data:', sessionData);
+      
       setSession(sessionData);
     } catch (error) {
       console.error('Error fetching session:', error);
@@ -65,9 +90,21 @@ export default function CheckoutSuccessPage() {
                 </div>
               )}
               
+              {orderId && !session && (
+                <div className="bg-gray-50 p-6 rounded-lg mb-8">
+                  <h3 className="font-semibold mb-2">Order Details</h3>
+                  <p className="text-sm text-gray-600">
+                    Order ID: {orderId}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Payment Method: Stripe
+                  </p>
+                </div>
+              )}
+              
               <div className="space-x-4">
                 <Link 
-                  href="/profile" 
+                  href="/profile#order-history" 
                   className="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors"
                 >
                   View Orders

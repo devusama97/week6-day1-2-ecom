@@ -21,6 +21,13 @@ export default function ProfilePage() {
     }
   }, [activeTab]);
 
+  useEffect(() => {
+    // Check for hash in URL to auto-switch to order history
+    if (window.location.hash === '#order-history') {
+      setActiveTab('orders');
+    }
+  }, []);
+
   const fetchOrders = async () => {
     try {
       setOrdersLoading(true);

@@ -74,7 +74,7 @@ export default function CustomerReviews() {
     return (
       <section className="px-4 py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-4xl font-bold text-center mb-12">OUR HAPPY CUSTOMERS</h3>
+          <h3 className="text-4xl font-extrabold text-center mb-12">OUR HAPPY CUSTOMERS</h3>
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
           </div>
@@ -87,7 +87,7 @@ export default function CustomerReviews() {
     <section className="px-4 py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-12">
-          <h3 className="text-4xl font-bold">OUR HAPPY CUSTOMERS</h3>
+          <h3 className="text-4xl font-extrabold">OUR HAPPY CUSTOMERS</h3>
           {reviews.length > 3 && (
             <div className="flex space-x-2">
               <button

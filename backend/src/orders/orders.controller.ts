@@ -54,4 +54,9 @@ export class OrdersController {
   updateStatus(@Param('id') id: string, @Body('status') status: OrderStatus) {
     return this.ordersService.updateStatus(id, status);
   }
+
+  @Post(':id/confirm-payment')
+  confirmPayment(@Param('id') id: string, @User() user: any) {
+    return this.ordersService.confirmOrderPayment(id);
+  }
 }

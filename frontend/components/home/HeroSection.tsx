@@ -5,7 +5,7 @@ export default function HeroSection() {
     <section className="bg-gray-100 px-4">
       <div className="max-w-7xl mx-auto flex items-center">
         <div className="flex-1 pr-8">
-          <h2 className="text-5xl font-bold text-black mb-6 leading-tight">
+          <h2 className="text-5xl font-extrabold text-black mb-6 leading-tight">
             FIND CLOTHES<br />
             THAT MATCHES<br />
             YOUR STYLE

@@ -12,7 +12,7 @@ export default function BrowseByStyle() {
   return (
     <section className="px-4 py-16 ">
       <div className="max-w-7xl mx-auto bg-[#F0F0F0] p-12 rounded-3xl">
-        <h3 className="text-4xl font-bold text-center mb-12">BROWSE BY DRESS STYLE</h3>
+        <h3 className="text-4xl font-extrabold text-center mb-12">BROWSE BY DRESS STYLE</h3>
         <div className="space-y-6">
           {/* First row: 40% and 60% */}
           <div className="flex gap-6">

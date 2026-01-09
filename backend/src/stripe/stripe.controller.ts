@@ -9,18 +9,52 @@ export class StripeController {
     @Inject(forwardRef(() => OrdersService)) private readonly ordersService: OrdersService,
   ) { }
 
+  @Post('create-payment-intent')
+  async createPaymentIntent(@Body() body: any) {
+    try {
+      const { amount, currency = 'usd', metadata } = body;
+      
+      if (!amount || amount <= 0) {
+        throw new BadRequestException('Invalid amount');
+      }
+      
+      const paymentIntent = await this.stripeService.createPaymentIntent(amount, currency, metadata);
+      
+      return { 
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id 
+      };
+    } catch (error) {
+      console.error('Payment Intent error:', error);
+      throw new BadRequestException(error.message || 'Failed to create payment intent');
+    }
+  }
+
   @Post('create-checkout-session')
   async createCheckoutSession(@Body() body: any) {
-    const { items, successUrl, cancelUrl } = body;
+    try {
+      const { items, successUrl, cancelUrl, shippingInfo } = body;
+      
+      console.log('Received checkout request:', { items, successUrl, cancelUrl });
+      
+      if (!items || items.length === 0) {
+        throw new BadRequestException('No items provided');
+      }
 
-    // Note: This endpoint might not be used if OrdersController creates the session directly.
-    const session = await this.stripeService.createCheckoutSession(
-      items,
-      successUrl,
-      cancelUrl
-    );
+      const session = await this.stripeService.createCheckoutSession(
+        items,
+        successUrl,
+        cancelUrl,
+        shippingInfo
+      );
 
-    return { sessionId: session.id, url: session.url };
+      console.log('Created session:', { sessionId: session.id, url: session.url });
+      
+      return { sessionId: session.id, url: session.url };
+    } catch (error) {
+      console.error('Checkout session error:', error);
+      throw new BadRequestException(error.message || 'Failed to create checkout session');
+    }
   }
 
   @Get('session')

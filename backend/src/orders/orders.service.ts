@@ -91,13 +91,33 @@ export class OrdersService {
       pointsEarned,
       shippingAddress: createOrderDto.shippingAddress,
       paymentMethod: createOrderDto.paymentMethod,
-      status: needsStripe ? OrderStatus.PENDING : OrderStatus.CONFIRMED,
-      paymentStatus: needsStripe ? 'pending' : 'paid',
+      status: createOrderDto.paymentMethod === 'card' ? OrderStatus.CONFIRMED : (needsStripe ? OrderStatus.PENDING : OrderStatus.CONFIRMED),
+      paymentStatus: createOrderDto.paymentMethod === 'card' ? 'paid' : (needsStripe ? 'pending' : 'paid'),
     });
 
     const savedOrder = await order.save();
 
-    if (needsStripe) {
+    // For card payments (Stripe Elements), payment is already successful
+    if (createOrderDto.paymentMethod === 'card') {
+      // Deduct points if used
+      if (createOrderDto.pointsUsed && createOrderDto.pointsUsed > 0) {
+        await this.usersService.updateLoyaltyPoints(userId, -createOrderDto.pointsUsed);
+        await this.loyaltyService.recordPointsSpent(userId, createOrderDto.pointsUsed, savedOrder._id.toString());
+      }
+
+      // Add points earned
+      if (pointsEarned > 0) {
+        await this.usersService.updateLoyaltyPoints(userId, pointsEarned);
+        await this.loyaltyService.recordPointsEarned(userId, pointsEarned, savedOrder._id.toString());
+      }
+
+      // Send notification
+      await this.notificationsService.sendOrderConfirmation(userId, savedOrder._id.toString());
+      
+      return { order: savedOrder };
+    }
+
+    if (needsStripe && createOrderDto.paymentMethod !== 'card') {
       const successUrl = `http://localhost:3000/checkout/success?orderId=${savedOrder._id}`;
       const cancelUrl = `http://localhost:3000/checkout/cancel?orderId=${savedOrder._id}`;
 
