@@ -35,7 +35,7 @@ export default function TopSelling() {
   return (
     <section className="px-4 py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <h3 className="text-4xl font-extrabold text-center mb-12">TOP SELLING</h3>
+        <h3 className="text-4xl font-extrabold text-center mb-12" style={{fontFamily: 'Integral CF, sans-serif'}}>TOP SELLING</h3>
 
         {loading ? (
           <div className="flex justify-center items-center py-12">

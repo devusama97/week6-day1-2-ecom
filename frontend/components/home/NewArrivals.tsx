@@ -61,7 +61,7 @@ export default function NewArrivals() {
     return (
       <section className="px-4 py-16">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-4xl font-extrabold text-center mb-12">NEW ARRIVALS</h3>
+          <h3 className="text-4xl font-extrabold text-center mb-12" style={{fontFamily: 'Integral CF, sans-serif'}}>NEW ARRIVALS</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-gray-200 animate-pulse rounded-lg h-80"></div>
@@ -75,7 +75,7 @@ export default function NewArrivals() {
   return (
     <section className="px-4 py-16">
       <div className="max-w-7xl mx-auto">
-        <h3 className="text-4xl font-extrabold text-center mb-12">NEW ARRIVALS</h3>
+        <h3 className="text-4xl font-extrabold text-center mb-12" style={{fontFamily: 'Integral CF, sans-serif'}}>NEW ARRIVALS</h3>
         {products.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500">No products available</p>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Integral+CF:wght@400;700;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +11,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: 'Inter', sans-serif;
+  --font-heading: 'Integral CF', sans-serif;
   --font-body: 'Satoshi', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
