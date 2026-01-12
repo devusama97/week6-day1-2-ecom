@@ -12,7 +12,7 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false }) // Made optional for social login users
   password: string;
 
   @Prop({ type: String, enum: Role, default: Role.USER })
@@ -26,6 +26,16 @@ export class User {
 
   @Prop({ default: false })
   isBlocked: boolean;
+
+  // OAuth fields
+  @Prop({ default: 'local' }) // 'local', 'google', 'github', 'discord'
+  provider: string;
+
+  @Prop({ required: false }) // OAuth user ID from provider
+  providerId: string;
+
+  @Prop({ required: false }) // Profile picture URL from provider
+  avatar: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

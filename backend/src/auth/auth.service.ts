@@ -30,6 +30,8 @@ export class AuthService {
         email: user.email,
         role: user.role,
         loyaltyPoints: user.loyaltyPoints,
+        avatar: user.avatar,
+        provider: user.provider,
       },
     };
   }
@@ -57,6 +59,58 @@ export class AuthService {
         email: userDoc.email,
         role: userDoc.role,
         loyaltyPoints: userDoc.loyaltyPoints,
+        avatar: userDoc.avatar,
+        provider: userDoc.provider,
+      },
+    };
+  }
+
+  async oauthLogin(oauthUser: any) {
+    let user = await this.usersService.findByEmail(oauthUser.email);
+    
+    if (!user) {
+      // Create new user from OAuth data
+      const newUserData = {
+        name: oauthUser.name,
+        email: oauthUser.email,
+        provider: oauthUser.provider,
+        providerId: oauthUser.providerId,
+        avatar: oauthUser.avatar,
+        // No password for OAuth users
+      };
+      user = await this.usersService.createOAuthUser(newUserData) as UserDocument;
+    } else {
+      // Update existing user with OAuth data if needed
+      const userDoc = user as UserDocument;
+      if (!userDoc.providerId || userDoc.provider === 'local') {
+        await this.usersService.updateOAuthData(userDoc._id.toString(), {
+          provider: oauthUser.provider,
+          providerId: oauthUser.providerId,
+          avatar: oauthUser.avatar,
+        });
+        user = await this.usersService.findByEmail(oauthUser.email);
+      }
+    }
+
+    const userDoc = user as UserDocument;
+    
+    // Check if user is blocked
+    if (userDoc.isBlocked) {
+      throw new UnauthorizedException('Your account has been blocked. Please contact support.');
+    }
+    
+    const payload = { email: userDoc.email, sub: userDoc._id.toString(), role: userDoc.role };
+    
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: userDoc._id.toString(),
+        name: userDoc.name,
+        email: userDoc.email,
+        role: userDoc.role,
+        loyaltyPoints: userDoc.loyaltyPoints,
+        avatar: userDoc.avatar,
+        provider: userDoc.provider,
       },
     };
   }

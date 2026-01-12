@@ -129,4 +129,31 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
   }
+
+  async createOAuthUser(oauthData: any): Promise<UserDocument> {
+    const user = new this.userModel({
+      name: oauthData.name,
+      email: oauthData.email,
+      provider: oauthData.provider,
+      providerId: oauthData.providerId,
+      avatar: oauthData.avatar,
+      // No password for OAuth users
+    });
+    return user.save();
+  }
+
+  async updateOAuthData(id: string, oauthData: any): Promise<UserDocument> {
+    const user = await this.userModel
+      .findByIdAndUpdate(id, {
+        provider: oauthData.provider,
+        providerId: oauthData.providerId,
+        avatar: oauthData.avatar,
+      }, { new: true })
+      .select('-password')
+      .exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
 }
