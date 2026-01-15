@@ -49,30 +49,30 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-max">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 sm:px-6 py-3 text-left">
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left hidden sm:table-cell">
                 <input type="checkbox" className="rounded" />
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Product</th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Order ID</th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Date</th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Customer Name</th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Status</th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Amount</th>
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Product</th>
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Order ID</th>
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-500 hidden md:table-cell">Date</th>
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-500 hidden lg:table-cell">Customer Name</th>
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Status</th>
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-500">Amount</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {orders.map((order, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                <td className="px-3 sm:px-6 py-4">
+                <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 hidden sm:table-cell">
                   <input type="checkbox" className="rounded" />
                 </td>
-                <td className="px-3 sm:px-6 py-4 text-xs sm:text-sm">{order.product}</td>
-                <td className="px-3 sm:px-6 py-4 text-xs sm:text-sm font-medium">{order.id}</td>
-                <td className="px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-600">{order.date}</td>
-                <td className="px-3 sm:px-6 py-4">
+                <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 text-xs sm:text-sm truncate max-w-[100px] sm:max-w-[150px] md:max-w-none">{order.product}</td>
+                <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap">{order.id}</td>
+                <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-600 hidden md:table-cell whitespace-nowrap">{order.date}</td>
+                <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 hidden lg:table-cell">
                   <div className="flex items-center space-x-2">
                     <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-300 rounded-full flex items-center justify-center text-xs sm:text-sm">
                       {order.customer.charAt(0)}
@@ -80,25 +80,24 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
                     <span className="text-xs sm:text-sm">{order.customer}</span>
                   </div>
                 </td>
-                <td className="px-3 sm:px-6 py-4">
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    order.status === 'Delivered' 
-                      ? 'bg-green-100 text-green-800' 
+                <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4">
+                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${order.status === 'Delivered'
+                      ? 'bg-green-100 text-green-800'
                       : order.status === 'Cancelled'
-                      ? 'bg-red-100 text-red-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    <span className={`w-2 h-2 rounded-full mr-1 ${
-                      order.status === 'Delivered' 
-                        ? 'bg-green-500' 
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                    <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 ${order.status === 'Delivered'
+                        ? 'bg-green-500'
                         : order.status === 'Cancelled'
-                        ? 'bg-red-500'
-                        : 'bg-yellow-500'
-                    }`}></span>
-                    {order.status}
+                          ? 'bg-red-500'
+                          : 'bg-yellow-500'
+                      }`}></span>
+                    <span className="hidden sm:inline">{order.status}</span>
+                    <span className="sm:hidden">{order.status.substring(0, 3)}</span>
                   </span>
                 </td>
-                <td className="px-3 sm:px-6 py-4 text-xs sm:text-sm font-medium">₹{order.amount.toFixed(2)}</td>
+                <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap">₹{order.amount.toFixed(2)}</td>
               </tr>
             ))}
           </tbody>

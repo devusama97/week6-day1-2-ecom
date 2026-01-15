@@ -8,6 +8,7 @@ import { ProductFormData } from '../../../../types/product';
 
 export default function AddProductPage() {
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -27,6 +28,10 @@ export default function AddProductPage() {
   const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [tagInput, setTagInput] = useState('');
+
+  const handleMenuClick = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   // Handle text input changes
   const handleInputChange = (
@@ -68,6 +73,12 @@ export default function AddProductPage() {
   // Image upload handling
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+
+    if (images.length + files.length > 3) {
+      alert('You can only upload up to 3 images per product.');
+      return;
+    }
+
     setImages((prev) => [...prev, ...files]);
   };
 
@@ -161,10 +172,10 @@ export default function AddProductPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 flex flex-col">
-        <AdminHeader />
+        <AdminHeader onMenuClick={handleMenuClick} />
 
         <main className="flex-1 p-6">
           {/* Header */}
@@ -344,7 +355,7 @@ export default function AddProductPage() {
                   <select
                     name="type"
                     value={formData.type}
-                    onChange={(e) => setFormData({...formData, type: e.target.value as 'regular' | 'loyalty_only' | 'hybrid'})}
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value as 'regular' | 'loyalty_only' | 'hybrid' })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="regular">Regular (Cash Only)</option>
@@ -369,7 +380,7 @@ export default function AddProductPage() {
                       required={formData.type === 'loyalty_only'}
                     />
                     <p className="text-sm text-gray-500 mt-1">
-                      {formData.type === 'loyalty_only' 
+                      {formData.type === 'loyalty_only'
                         ? 'This product can only be purchased with points'
                         : 'Users can buy this product with either cash or points'
                       }
@@ -439,7 +450,7 @@ export default function AddProductPage() {
                     />
                     <label
                       htmlFor="image-upload"
-                      className="inline-block bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600"
+                      className="inline-block bg-black text-white px-4 py-2 rounded cursor-pointer hover:bg-gray-800"
                     >
                       Browse Files
                     </label>
@@ -456,8 +467,8 @@ export default function AddProductPage() {
                             <div className="w-10 h-10 bg-gray-300 rounded"></div>
                             <div>
                               <p className="text-sm font-medium">{image.name}</p>
-                              <div className="w-32 h-1 bg-blue-200 rounded">
-                                <div className="w-full h-1 bg-blue-500 rounded"></div>
+                              <div className="w-32 h-1 bg-gray-200 rounded">
+                                <div className="w-full h-1 bg-black rounded"></div>
                               </div>
                             </div>
                           </div>
@@ -489,7 +500,7 @@ export default function AddProductPage() {
                 type="button"
                 onClick={handleDone}
                 disabled={loading}
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 transition-colors"
+                className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors"
               >
                 {loading ? 'Saving...' : 'Done'}
               </button>

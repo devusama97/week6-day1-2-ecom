@@ -4,13 +4,20 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AdminSidebar from '../../../components/admin/AdminSidebar';
 import AdminHeader from '../../../components/admin/AdminHeader';
+import { Product } from '../../../types/product';
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
+
+  const handleMenuClick = () => {
+    console.log('Menu clicked! Current state:', sidebarOpen);
+    setSidebarOpen(!sidebarOpen);
+    console.log('New state will be:', !sidebarOpen);
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -20,7 +27,7 @@ export default function AdminProductsPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      
+
       const response = await fetch('http://localhost:4000/api/products', {
         method: 'GET',
         headers: {
@@ -34,7 +41,7 @@ export default function AdminProductsPage() {
         // Handle response wrapped by ResponseInterceptor: { data, success, message }
         const productsData = result.data || result;
         // Ensure products is always an array
-        setProducts(Array.isArray(productsData) ? productsData : []);
+        setProducts(Array.isArray(productsData) ? (productsData as Product[]) : []);
       } else {
         console.error('Failed to fetch products');
         setProducts([]);
@@ -52,8 +59,8 @@ export default function AdminProductsPage() {
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedProducts = Array.isArray(products) 
-    ? products.slice(startIndex, endIndex) 
+  const paginatedProducts = Array.isArray(products)
+    ? products.slice(startIndex, endIndex)
     : [];
 
   // Pagination handlers
@@ -119,23 +126,23 @@ export default function AdminProductsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      
-      <div className="flex-1 flex flex-col">
-        <AdminHeader />
-        
-        <main className="flex-1 p-6">
-          <div className="flex items-center justify-between mb-6">
+    <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      <div className="flex-1 flex flex-col min-w-0">
+        <AdminHeader onMenuClick={handleMenuClick} />
+
+        <main className="flex-1 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-4 sm:gap-0">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">All Products</h1>
-              <nav className="text-sm text-gray-500">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">All Products</h1>
+              <nav className="text-xs sm:text-sm text-gray-500">
                 Home &gt; All Products
               </nav>
             </div>
-            <Link 
+            <Link
               href="/admin/products/add"
-              className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+              className="bg-black text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm sm:text-base w-full sm:w-auto text-center"
             >
               ADD NEW PRODUCT
             </Link>
@@ -154,7 +161,7 @@ export default function AdminProductsPage() {
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No products yet</h3>
               <p className="text-gray-500 mb-6">Get started by adding your first product</p>
-              <Link 
+              <Link
                 href="/admin/products/add"
                 className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
               >
@@ -163,73 +170,73 @@ export default function AdminProductsPage() {
             </div>
           ) : (
             <>
-            <div className="mb-4 text-sm text-gray-600">
-              Showing {startIndex + 1} to {Math.min(endIndex, totalProducts)} of {totalProducts} products
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedProducts.map((product: any) => (
-                <Link 
-                  key={product._id || product.id} 
-                  href={`/admin/products/edit/${product._id || product.id}`}
-                  className="bg-white rounded-lg border p-6 hover:shadow-lg transition-shadow cursor-pointer"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    {product.images && product.images.length > 0 ? (
-                      <img 
-                        src={product.images[0]} 
-                        alt={product.name}
-                        className="w-16 h-16 object-cover rounded"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-gray-200 rounded"></div>
-                    )}
-                    <button className="text-gray-400">⋯</button>
-                  </div>
-                  
-                  <h3 className="font-semibold mb-1">{product.name}</h3>
-                  <p className="text-sm text-gray-500 mb-2">{product.category || 'Uncategorized'}</p>
-                  <div className="flex items-center gap-2 mb-4">
-                    {product.isOnSale && product.salePrice ? (
-                      <>
-                        <p className="text-lg font-bold text-red-600">₹{product.salePrice}</p>
-                        <p className="text-sm text-gray-400 line-through">₹{product.price}</p>
-                      </>
-                    ) : (
-                      <p className="text-lg font-bold">₹{product.price}</p>
-                    )}
-                  </div>
-                  
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium mb-2">Summary</h4>
-                    <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Stock</span>
-                      <span className={product.stock > 0 ? 'text-green-600' : 'text-red-600'}>
-                        {product.stock || 0}
-                      </span>
+              <div className="mb-4 text-sm text-gray-600">
+                Showing {startIndex + 1} to {Math.min(endIndex, totalProducts)} of {totalProducts} products
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedProducts.map((product: any) => (
+                  <Link
+                    key={product._id || product.id}
+                    href={`/admin/products/edit/${product._id || product.id}`}
+                    className="bg-white rounded-lg border p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      {product.images && product.images.length > 0 ? (
+                        <img
+                          src={product.images[0]}
+                          alt={product.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-gray-200 rounded"></div>
+                      )}
+                      <button className="text-gray-400">⋯</button>
                     </div>
-                    {product.brand && (
+
+                    <h3 className="font-semibold mb-1">{product.name}</h3>
+                    <p className="text-sm text-gray-500 mb-2">{product.category || 'Uncategorized'}</p>
+                    <div className="flex items-center gap-2 mb-4">
+                      {product.isOnSale && product.salePrice ? (
+                        <>
+                          <p className="text-lg font-bold text-red-600">₹{product.salePrice}</p>
+                          <p className="text-sm text-gray-400 line-through">₹{product.price}</p>
+                        </>
+                      ) : (
+                        <p className="text-lg font-bold">₹{product.price}</p>
+                      )}
+                    </div>
+
+                    <div className="mb-4">
+                      <h4 className="text-sm font-medium mb-2">Summary</h4>
+                      <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
+                    </div>
+
+                    <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Brand</span>
-                        <span className="text-gray-900">{product.brand}</span>
+                        <span className="text-gray-600">Stock</span>
+                        <span className={product.stock > 0 ? 'text-green-600' : 'text-red-600'}>
+                          {product.stock || 0}
+                        </span>
                       </div>
-                    )}
-                    {product.tags && product.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {product.tags.slice(0, 3).map((tag: string, idx: number) => (
-                          <span key={idx} className="text-xs bg-gray-100 px-2 py-1 rounded">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
+                      {product.brand && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Brand</span>
+                          <span className="text-gray-900">{product.brand}</span>
+                        </div>
+                      )}
+                      {product.tags && product.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {product.tags.slice(0, 3).map((tag: string, idx: number) => (
+                            <span key={idx} className="text-xs bg-gray-100 px-2 py-1 rounded">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </>
           )}
 
@@ -239,11 +246,10 @@ export default function AdminProductsPage() {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-3 py-2 rounded ${
-                  currentPage === 1
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                className={`px-3 py-2 rounded ${currentPage === 1
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-gray-600 hover:bg-gray-100'
+                  }`}
               >
                 PREV
               </button>
@@ -262,11 +268,10 @@ export default function AdminProductsPage() {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page as number)}
-                    className={`px-3 py-2 rounded ${
-                      currentPage === page
-                        ? 'bg-black text-white'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
+                    className={`px-3 py-2 rounded ${currentPage === page
+                      ? 'bg-black text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                      }`}
                   >
                     {page}
                   </button>
@@ -277,11 +282,10 @@ export default function AdminProductsPage() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-3 py-2 rounded ${
-                  currentPage === totalPages
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                className={`px-3 py-2 rounded ${currentPage === totalPages
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-gray-600 hover:bg-gray-100'
+                  }`}
               >
                 NEXT
               </button>

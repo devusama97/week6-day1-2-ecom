@@ -43,7 +43,7 @@ export default function AdminOrdersPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      
+
       const response = await fetch('http://localhost:4000/api/orders', {
         method: 'GET',
         headers: {
@@ -56,10 +56,10 @@ export default function AdminOrdersPage() {
         const result = await response.json();
         const ordersData = result.data || result;
         // Sort by date (newest first)
-        const sortedOrders = Array.isArray(ordersData) 
-          ? ordersData.sort((a: Order, b: Order) => 
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            )
+        const sortedOrders = Array.isArray(ordersData)
+          ? ordersData.sort((a: Order, b: Order) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
           : [];
         setOrders(sortedOrders);
       } else {
@@ -77,7 +77,7 @@ export default function AdminOrdersPage() {
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       const token = localStorage.getItem('token');
-      
+
       const response = await fetch(`http://localhost:4000/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
@@ -89,9 +89,9 @@ export default function AdminOrdersPage() {
 
       if (response.ok) {
         // Update local state
-        setOrders(prevOrders => 
-          prevOrders.map(order => 
-            order._id === orderId 
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order._id === orderId
               ? { ...order, status: newStatus }
               : order
           )
@@ -205,16 +205,16 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      <div className="flex-1 flex flex-col">
+
+      <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-        
-        <main className="flex-1 p-6">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">Orders List</h1>
-            <nav className="text-sm text-gray-500">
+
+        <main className="flex-1 p-4 sm:p-6">
+          <div className="mb-4 sm:mb-6">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Orders List</h1>
+            <nav className="text-xs sm:text-sm text-gray-500">
               Home &gt; Order List
             </nav>
           </div>
@@ -238,35 +238,35 @@ export default function AdminOrdersPage() {
               <div className="mb-4 text-sm text-gray-600">
                 Showing {startIndex + 1} to {Math.min(endIndex, totalOrders)} of {totalOrders} orders
               </div>
-              
+
               <div className="bg-white rounded-lg border overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900">Recent Purchases</h2>
+                <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900">Recent Purchases</h2>
                 </div>
-                
+
                 <div className="overflow-x-auto">
-                  <table className="w-full">
+                  <table className="w-full min-w-max">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                           <input type="checkbox" className="rounded border-gray-300" />
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Product
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Order ID
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                           Date
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                           Customer Name
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Amount
                         </th>
                       </tr>
@@ -274,49 +274,49 @@ export default function AdminOrdersPage() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {paginatedOrders.map((order) => (
                         <tr key={order._id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden sm:table-cell">
                             <input type="checkbox" className="rounded border-gray-300" />
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4">
                             <div className="flex items-center">
                               {order.items && order.items.length > 0 && order.items[0].product?.images && order.items[0].product.images.length > 0 ? (
                                 <img
                                   src={order.items[0].product.images[0]}
                                   alt={order.items[0].product.name}
-                                  className="w-10 h-10 object-cover rounded mr-3"
+                                  className="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded mr-2 sm:mr-3"
                                 />
                               ) : (
-                                <div className="w-10 h-10 bg-gray-200 rounded mr-3"></div>
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded mr-2 sm:mr-3"></div>
                               )}
-                              <span className="text-sm font-medium text-gray-900">
-                                {order.items && order.items.length > 0 
+                              <span className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[100px] sm:max-w-none">
+                                {order.items && order.items.length > 0
                                   ? order.items[0].product?.name || 'Product'
                                   : 'N/A'}
                                 {order.items && order.items.length > 1 && (
-                                  <span className="text-gray-500 ml-1">+{order.items.length - 1} more</span>
+                                  <span className="text-gray-500 ml-1">+{order.items.length - 1}</span>
                                 )}
                               </span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-sm text-gray-900">{getOrderId(order._id)}</span>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <span className="text-xs sm:text-sm text-gray-900">{getOrderId(order._id)}</span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-sm text-gray-500">{formatDate(order.createdAt)}</span>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden md:table-cell">
+                            <span className="text-xs sm:text-sm text-gray-500">{formatDate(order.createdAt)}</span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden lg:table-cell">
                             <div className="flex items-center">
-                              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2">
+                              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2">
                                 {order.user?.name?.charAt(0).toUpperCase() || 'U'}
                               </div>
-                              <span className="text-sm text-gray-900">{order.user?.name || 'Unknown'}</span>
+                              <span className="text-xs sm:text-sm text-gray-900">{order.user?.name || 'Unknown'}</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                             <select
                               value={order.status}
                               onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                              className={`text-sm font-medium border-none bg-transparent cursor-pointer ${getStatusColor(order.status)}`}
+                              className={`text-xs sm:text-sm font-medium border-none bg-transparent cursor-pointer ${getStatusColor(order.status)}`}
                             >
                               <option value="pending">Pending</option>
                               <option value="confirmed">Confirmed</option>
@@ -326,8 +326,8 @@ export default function AdminOrdersPage() {
                               <option value="cancelled">Cancelled</option>
                             </select>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-sm font-medium text-gray-900">₹{order.totalAmount.toFixed(2)}</span>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <span className="text-xs sm:text-sm font-medium text-gray-900">₹{order.totalAmount.toFixed(2)}</span>
                           </td>
                         </tr>
                       ))}
@@ -337,15 +337,14 @@ export default function AdminOrdersPage() {
               </div>
 
               {totalPages > 1 && (
-                <div className="flex items-center justify-center mt-8 space-x-2">
+                <div className="flex items-center justify-center mt-6 sm:mt-8 space-x-1 sm:space-x-2">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`px-3 py-2 rounded ${
-                      currentPage === 1
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
+                    className={`px-2 sm:px-3 py-2 rounded text-xs sm:text-sm ${currentPage === 1
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-600 hover:bg-gray-100'
+                      }`}
                   >
                     PREV
                   </button>
@@ -353,7 +352,7 @@ export default function AdminOrdersPage() {
                   {getPageNumbers().map((page, index) => {
                     if (page === '...') {
                       return (
-                        <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-400">
+                        <span key={`ellipsis-${index}`} className="px-2 sm:px-3 py-2 text-gray-400 text-xs sm:text-sm">
                           ...
                         </span>
                       );
@@ -363,11 +362,10 @@ export default function AdminOrdersPage() {
                       <button
                         key={page}
                         onClick={() => handlePageChange(page as number)}
-                        className={`px-3 py-2 rounded ${
-                          currentPage === page
-                            ? 'bg-black text-white'
-                            : 'text-gray-600 hover:bg-gray-100'
-                        }`}
+                        className={`px-2 sm:px-3 py-2 rounded text-xs sm:text-sm ${currentPage === page
+                          ? 'bg-black text-white'
+                          : 'text-gray-600 hover:bg-gray-100'
+                          }`}
                       >
                         {page}
                       </button>
@@ -377,11 +375,10 @@ export default function AdminOrdersPage() {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-2 rounded ${
-                      currentPage === totalPages
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
+                    className={`px-2 sm:px-3 py-2 rounded text-xs sm:text-sm ${currentPage === totalPages
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-600 hover:bg-gray-100'
+                      }`}
                   >
                     NEXT
                   </button>

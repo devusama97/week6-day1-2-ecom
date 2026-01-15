@@ -23,13 +23,13 @@ interface DashboardData {
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+
   const handleMenuClick = () => {
     console.log('Menu clicked! Current state:', sidebarOpen);
     setSidebarOpen(!sidebarOpen);
     console.log('New state will be:', !sidebarOpen);
   };
-  
+
   const [stats, setStats] = useState({
     totalOrders: { value: 0, change: 0 },
     activeOrders: { value: 0, change: 0 },
@@ -49,12 +49,12 @@ export default function AdminDashboard() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      
+
       if (!token) {
         console.error('No authentication token found');
         return;
       }
-      
+
       const response = await fetch('http://localhost:4000/api/admin/dashboard', {
         method: 'GET',
         headers: {
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
       if (response.ok) {
         const result = await response.json();
         const data: DashboardData = result.data || result;
-        
+
         // Use stats from backend or calculate from orders
         const totalRevenue = data.totalRevenue || 0;
         const activeOrders = data.activeOrders || 0;
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
         // Transform recent orders for display
         const transformedOrders = (data.recentOrders || []).slice(0, 10).map((order: any) => ({
           id: `#${order._id?.slice(-5).toUpperCase() || 'N/A'}`,
-          product: order.items && order.items.length > 0 
+          product: order.items && order.items.length > 0
             ? order.items[0].product?.name || 'Product'
             : 'N/A',
           date: formatDate(order.createdAt),
@@ -98,14 +98,14 @@ export default function AdminDashboard() {
         // For now, use recent orders
         const allOrdersForBestSellers = data.recentOrders || [];
         const productSales: { [key: string]: { name: string; sales: number; price: number; originalPrice: number } } = {};
-        
+
         allOrdersForBestSellers.forEach((order: any) => {
           if (order.items && Array.isArray(order.items)) {
             order.items.forEach((item: any) => {
               const productId = item.product?._id || item.product;
               const productName = item.product?.name || 'Unknown Product';
               const productPrice = item.price || item.product?.price || 0;
-              
+
               if (productSales[productId]) {
                 productSales[productId].sales += item.quantity || 1;
               } else {
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
           .slice(0, 3);
 
         setBestSellers(topSellers);
-        
+
         // Store all orders for SalesChart (need to fetch all orders)
         // For now, we'll fetch all orders separately for the chart
         try {
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
               Authorization: `Bearer ${token}`,
             },
           });
-          
+
           if (allOrdersResponse.ok) {
             const allOrdersResult = await allOrdersResponse.json();
             const allOrdersData = allOrdersResult.data || allOrdersResult;
@@ -184,12 +184,12 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      <div className="flex-1 flex flex-col">
+
+      <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader onMenuClick={handleMenuClick} />
-        
+
         <main className="flex-1 p-4 sm:p-6">
           <div className="mb-4 sm:mb-6">
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>

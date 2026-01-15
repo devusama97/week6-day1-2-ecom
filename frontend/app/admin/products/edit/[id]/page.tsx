@@ -24,12 +24,17 @@ export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const productId = params.id as string;
-  
+
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [newImages, setNewImages] = useState<File[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleMenuClick = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   useEffect(() => {
     fetchProduct();
@@ -57,12 +62,12 @@ export default function ProductDetailPage() {
 
   const handleUpdate = async () => {
     if (!product) return;
-    
+
     setUpdating(true);
     try {
       const token = localStorage.getItem('token');
       const formData = new FormData();
-      
+
       formData.append('name', product.name);
       formData.append('description', product.description);
       formData.append('category', product.category);
@@ -70,7 +75,7 @@ export default function ProductDetailPage() {
       formData.append('sku', product.sku);
       formData.append('stock', product.stock.toString());
       formData.append('price', product.price.toString());
-      
+
       // Handle salePrice and isOnSale
       if (product.salePrice && product.salePrice > 0) {
         formData.append('salePrice', product.salePrice.toString());
@@ -79,10 +84,10 @@ export default function ProductDetailPage() {
         formData.append('salePrice', '0');
         formData.append('isOnSale', 'false');
       }
-      
+
       // Send existing images that should be kept
       formData.append('existingImages', JSON.stringify(product.images));
-      
+
       // Handle tags - only append if tags exist
       if (product.tags && product.tags.length > 0) {
         product.tags.forEach(tag => {
@@ -107,8 +112,8 @@ export default function ProductDetailPage() {
         router.push('/admin/products');
       } else {
         const error = await response.json();
-        const errorMessage = Array.isArray(error.message) 
-          ? error.message.join(', ') 
+        const errorMessage = Array.isArray(error.message)
+          ? error.message.join(', ')
           : error.message || 'Failed to update product';
         alert(`Failed to update product: ${errorMessage}`);
         console.error('Update error:', error);
@@ -123,7 +128,7 @@ export default function ProductDetailPage() {
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-    
+
     setDeleting(true);
     try {
       const token = localStorage.getItem('token');
@@ -179,9 +184,9 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen bg-gray-50">
-        <AdminSidebar />
+        <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex-1 flex flex-col">
-          <AdminHeader />
+          <AdminHeader onMenuClick={handleMenuClick} />
           <main className="flex-1 p-6">
             <div className="bg-white rounded-lg p-8 text-center">
               <p>Loading product details...</p>
@@ -195,9 +200,9 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <div className="flex min-h-screen bg-gray-50">
-        <AdminSidebar />
+        <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex-1 flex flex-col">
-          <AdminHeader />
+          <AdminHeader onMenuClick={handleMenuClick} />
           <main className="flex-1 p-6">
             <div className="bg-white rounded-lg p-8 text-center">
               <p>Product not found</p>
@@ -210,11 +215,11 @@ export default function ProductDetailPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
       <div className="flex-1 flex flex-col">
-        <AdminHeader />
-        
+        <AdminHeader onMenuClick={handleMenuClick} />
+
         <main className="flex-1 p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900">Product Details</h1>
@@ -384,12 +389,12 @@ export default function ProductDetailPage() {
                     />
                     <label
                       htmlFor="image-upload"
-                      className="mt-2 inline-block px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600"
+                      className="mt-2 inline-block px-4 py-2 bg-black text-white rounded cursor-pointer hover:bg-gray-800"
                     >
                       Browse Files
                     </label>
                   </div>
-                  
+
                   <div className="mt-4 space-y-3">
                     {product.images.map((image, index) => (
                       <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -401,7 +406,7 @@ export default function ProductDetailPage() {
                         <div className="flex-1">
                           <p className="text-sm font-medium">Product thumbnail.png</p>
                           <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
-                            <div className="bg-blue-500 h-1 rounded-full w-full"></div>
+                            <div className="bg-black h-1 rounded-full w-full"></div>
                           </div>
                         </div>
                         <button
@@ -413,7 +418,7 @@ export default function ProductDetailPage() {
                       </div>
                     ))}
                     {newImages.map((image, index) => (
-                      <div key={`new-${index}`} className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                      <div key={`new-${index}`} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <img
                           src={URL.createObjectURL(image)}
                           alt={`New ${index + 1}`}
@@ -449,7 +454,7 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
               >
                 {deleting ? 'DELETING...' : 'DELETE'}
               </button>
