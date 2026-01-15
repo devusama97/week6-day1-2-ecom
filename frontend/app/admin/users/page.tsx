@@ -26,7 +26,7 @@ export default function UsersPage() {
       console.log('API Response:', response);
 
       // Handle backend response interceptor format: { data: {...}, success: true }
-      const data = response.data || response;
+      const data = (response as any).data || response;
       const usersData = data?.users || data || [];
       const totalPagesData = data?.totalPages || 1;
 
@@ -189,8 +189,8 @@ export default function UsersPage() {
                       key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`px-2 sm:px-3 py-2 border rounded-lg text-xs sm:text-sm ${currentPage === page
-                          ? 'bg-black text-white'
-                          : 'hover:bg-gray-50'
+                        ? 'bg-black text-white'
+                        : 'hover:bg-gray-50'
                         }`}
                     >
                       {page}

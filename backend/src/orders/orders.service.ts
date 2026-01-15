@@ -113,13 +113,13 @@ export class OrdersService {
 
       // Send notification
       await this.notificationsService.sendOrderConfirmation(userId, savedOrder._id.toString());
-      
+
       return { order: savedOrder };
     }
 
     if (needsStripe && createOrderDto.paymentMethod !== 'card') {
-      const successUrl = `http://localhost:3000/checkout/success?orderId=${savedOrder._id}`;
-      const cancelUrl = `http://localhost:3000/checkout/cancel?orderId=${savedOrder._id}`;
+      const successUrl = `${process.env.FRONTEND_URL}/checkout/success?orderId=${savedOrder._id}`;
+      const cancelUrl = `${process.env.FRONTEND_URL}/checkout/cancel?orderId=${savedOrder._id}`;
 
       const session = await this.stripeService.createCheckoutSession(
         orderItemsForStripe,

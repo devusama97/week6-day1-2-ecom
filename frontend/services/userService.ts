@@ -43,7 +43,7 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  role: 'user' | 'admin' | 'superadmin';
+  role: 'user' | 'admin' | 'superadmin' | 'super_admin';
   isBlocked: boolean;
   createdAt: string;
 }

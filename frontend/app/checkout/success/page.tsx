@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '../../../components/common/Header';
 import Navbar from '../../../components/common/Navbar';
 import Footer from '../../../components/common/Footer';
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const orderId = searchParams.get('orderId');
@@ -43,11 +43,11 @@ export default function CheckoutSuccessPage() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stripe/session?session_id=${sessionId}`);
       const responseData = await response.json();
-      
+
       // Handle wrapped response from ResponseInterceptor
       const sessionData = responseData.data || responseData;
       console.log('Session data:', sessionData);
-      
+
       setSession(sessionData);
     } catch (error) {
       console.error('Error fetching session:', error);
@@ -60,7 +60,7 @@ export default function CheckoutSuccessPage() {
     <div className="min-h-screen bg-white">
       <Header />
       <Navbar />
-      
+
       <div className="px-4 py-16">
         <div className="max-w-2xl mx-auto text-center">
           {loading ? (
@@ -72,12 +72,12 @@ export default function CheckoutSuccessPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              
+
               <h1 className="text-3xl font-bold text-green-600 mb-4">Payment Successful!</h1>
               <p className="text-gray-600 mb-8">
                 Thank you for your purchase. Your order has been confirmed and will be processed shortly.
               </p>
-              
+
               {session && (
                 <div className="bg-gray-50 p-6 rounded-lg mb-8">
                   <h3 className="font-semibold mb-2">Order Details</h3>
@@ -89,7 +89,7 @@ export default function CheckoutSuccessPage() {
                   </p>
                 </div>
               )}
-              
+
               {orderId && !session && (
                 <div className="bg-gray-50 p-6 rounded-lg mb-8">
                   <h3 className="font-semibold mb-2">Order Details</h3>
@@ -101,16 +101,16 @@ export default function CheckoutSuccessPage() {
                   </p>
                 </div>
               )}
-              
+
               <div className="space-x-4">
-                <Link 
-                  href="/profile#order-history" 
+                <Link
+                  href="/profile#order-history"
                   className="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors"
                 >
                   View Orders
                 </Link>
-                <Link 
-                  href="/products" 
+                <Link
+                  href="/products"
                   className="border border-gray-300 px-8 py-3 rounded-full hover:bg-gray-50 transition-colors"
                 >
                   Continue Shopping
@@ -120,8 +120,20 @@ export default function CheckoutSuccessPage() {
           )}
         </div>
       </div>
-      
+
       <Footer />
     </div>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+      </div>
+    }>
+      <CheckoutSuccessContent />
+    </Suspense>
   );
 }

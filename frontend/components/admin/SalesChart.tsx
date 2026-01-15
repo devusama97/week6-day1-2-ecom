@@ -72,7 +72,7 @@ export default function SalesChart({ orders }: SalesChartProps) {
     // Aggregate orders by period
     orders.forEach((order: any) => {
       if (!order.createdAt || !order.totalAmount) return;
-      
+
       const orderDate = new Date(order.createdAt);
       let key = '';
 
@@ -137,7 +137,7 @@ export default function SalesChart({ orders }: SalesChartProps) {
           size: 11,
         },
         callbacks: {
-          callback: function(context: any) {
+          label: function (context: any) {
             return `Revenue: PKR ${context.parsed.y.toLocaleString()}`;
           },
         },
@@ -173,7 +173,7 @@ export default function SalesChart({ orders }: SalesChartProps) {
           font: {
             size: window.innerWidth < 640 ? 10 : 12,
           },
-          callback: function(value: any) {
+          callback: function (value: any) {
             return 'PKR ' + value.toLocaleString();
           },
         },
@@ -189,25 +189,22 @@ export default function SalesChart({ orders }: SalesChartProps) {
           <div className="flex space-x-1 sm:space-x-2 w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('WEEKLY')}
-              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
-                activeTab === 'WEEKLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${activeTab === 'WEEKLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               WEEKLY
             </button>
             <button
               onClick={() => setActiveTab('MONTHLY')}
-              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
-                activeTab === 'MONTHLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${activeTab === 'MONTHLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               MONTHLY
             </button>
             <button
               onClick={() => setActiveTab('YEARLY')}
-              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
-                activeTab === 'YEARLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${activeTab === 'YEARLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               YEARLY
             </button>
@@ -232,25 +229,22 @@ export default function SalesChart({ orders }: SalesChartProps) {
         <div className="flex space-x-1 sm:space-x-2 w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('WEEKLY')}
-            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
-              activeTab === 'WEEKLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-            }`}
+            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${activeTab === 'WEEKLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
           >
             WEEKLY
           </button>
           <button
             onClick={() => setActiveTab('MONTHLY')}
-            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
-              activeTab === 'MONTHLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-            }`}
+            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${activeTab === 'MONTHLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
           >
             MONTHLY
           </button>
           <button
             onClick={() => setActiveTab('YEARLY')}
-            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
-              activeTab === 'YEARLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-            }`}
+            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${activeTab === 'YEARLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
           >
             YEARLY
           </button>

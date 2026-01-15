@@ -12,7 +12,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
-  ) {}
+  ) { }
 
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
@@ -51,7 +51,7 @@ export class AuthController {
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.oauthLogin(req.user);
     // Redirect to frontend with token
-    res.redirect(`http://localhost:3000/auth/callback?token=${result.access_token}`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${result.access_token}`);
   }
 
   // GitHub OAuth routes
@@ -66,7 +66,7 @@ export class AuthController {
   async githubAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.oauthLogin(req.user);
     // Redirect to frontend with token
-    res.redirect(`http://localhost:3000/auth/callback?token=${result.access_token}`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${result.access_token}`);
   }
 
   // Discord OAuth routes
@@ -81,6 +81,6 @@ export class AuthController {
   async discordAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.oauthLogin(req.user);
     // Redirect to frontend with token
-    res.redirect(`http://localhost:3000/auth/callback?token=${result.access_token}`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${result.access_token}`);
   }
 }

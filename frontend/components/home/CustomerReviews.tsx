@@ -27,8 +27,7 @@ export default function CustomerReviews() {
           userId: { _id: '1', name: 'Sarah M.', email: 'sarah@example.com' },
           productId: '1',
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isActive: true
+          updatedAt: new Date().toISOString()
         },
         {
           _id: '2',
@@ -37,8 +36,7 @@ export default function CustomerReviews() {
           userId: { _id: '2', name: 'Alex K.', email: 'alex@example.com' },
           productId: '2',
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isActive: true
+          updatedAt: new Date().toISOString()
         },
         {
           _id: '3',
@@ -47,8 +45,7 @@ export default function CustomerReviews() {
           userId: { _id: '3', name: 'James L.', email: 'james@example.com' },
           productId: '3',
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isActive: true
+          updatedAt: new Date().toISOString()
         }
       ] as Review[]);
     } finally {
@@ -57,13 +54,13 @@ export default function CustomerReviews() {
   };
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => 
+    setCurrentIndex((prev) =>
       prev + 3 >= reviews.length ? 0 : prev + 3
     );
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => 
+    setCurrentIndex((prev) =>
       prev === 0 ? Math.max(0, reviews.length - 3) : prev - 3
     );
   };
@@ -74,7 +71,7 @@ export default function CustomerReviews() {
     return (
       <section className="px-4 py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-4xl font-extrabold text-center mb-12" style={{fontFamily: 'Integral CF, sans-serif'}}>OUR HAPPY CUSTOMERS</h3>
+          <h3 className="text-4xl font-extrabold text-center mb-12" style={{ fontFamily: 'Integral CF, sans-serif' }}>OUR HAPPY CUSTOMERS</h3>
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
           </div>
@@ -87,7 +84,7 @@ export default function CustomerReviews() {
     <section className="px-4 py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-12">
-          <h3 className="text-4xl font-extrabold" style={{fontFamily: 'Integral CF, sans-serif'}}>OUR HAPPY CUSTOMERS</h3>
+          <h3 className="text-4xl font-extrabold" style={{ fontFamily: 'Integral CF, sans-serif' }}>OUR HAPPY CUSTOMERS</h3>
           {reviews.length > 3 && (
             <div className="flex space-x-2">
               <button
@@ -107,7 +104,7 @@ export default function CustomerReviews() {
             </div>
           )}
         </div>
-        
+
         {reviews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {visibleReviews.map((review) => (
