@@ -10,10 +10,33 @@ export default function BrowseByStyle() {
   ];
 
   return (
-    <section className="px-4 py-16 ">
-      <div className="max-w-7xl mx-auto bg-[#F0F0F0] p-12 rounded-3xl">
-        <h3 className="text-4xl font-extrabold text-center mb-12" style={{fontFamily: 'Integral CF, sans-serif'}}>BROWSE BY DRESS STYLE</h3>
-        <div className="space-y-6">
+    <section className="px-4 py-8 sm:py-12 lg:py-16">
+      <div className="max-w-7xl mx-auto bg-[#F0F0F0] p-6 sm:p-8 lg:p-12 rounded-3xl">
+        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center mb-8 lg:mb-12" style={{fontFamily: 'Integral CF, sans-serif'}}>BROWSE BY DRESS STYLE</h3>
+        
+        {/* Mobile: Vertical Stack */}
+        <div className="flex flex-col md:hidden space-y-4">
+          {styles.map((style) => (
+            <Link 
+              key={style.slug}
+              href={`/category/${style.slug}`}
+              className="relative bg-gray-100 rounded-2xl overflow-hidden h-48 block hover:shadow-lg transition-shadow"
+            >
+              <Image 
+                src={style.image} 
+                alt={style.name} 
+                fill 
+                className="object-cover" 
+              />
+              <div className="absolute top-4 left-4">
+                <h4 className="text-xl font-bold">{style.name}</h4>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Desktop: Original Layout */}
+        <div className="hidden md:block space-y-6">
           {/* First row: 40% and 60% */}
           <div className="flex gap-6">
             <Link 

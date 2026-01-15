@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { authService } from '../../../services/authService';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { login, user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,24 +22,19 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await authService.login({ email, password });
-      console.log('Login response:', response); // Debug log
+      await login(email, password);
       
-      // Handle wrapped response from backend
-      const authData = response.data || response;
-      
-      if (authData && authData.user) {
-        authService.setAuth(authData.access_token, authData.user);
+      // Wait for next tick to ensure state is updated
+      setTimeout(() => {
+        const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const userRole = savedUser.role;
         
-        // Redirect based on user role
-        if (authData.user.role === 'admin' || authData.user.role === 'super_admin') {
+        if (userRole === 'admin' || userRole === 'super_admin') {
           router.push('/admin');
         } else {
           router.push('/products');
         }
-      } else {
-        setError('Invalid response from server');
-      }
+      }, 100);
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {
@@ -48,36 +44,22 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-4xl w-full flex">
-        {/* Left side - Image */}
-        <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-gray-800 to-gray-900 relative">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Image
-              src="/login-register.jpg"
-              alt="Shoe"
-              width={400}
-              height={300}
-              className="object-contain"
-            />
-          </div>
-        </div>
-
-        {/* Right side - Login Form */}
-        <div className="w-full md:w-1/2 p-8 md:p-12">
+      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-md w-full">
+        <div className="w-full p-6 sm:p-8 md:p-12">
           <div className="max-w-md mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h1>
-            <p className="text-gray-600 mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h1>
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
               Log in now to explore all the features and benefits of our platform and see what's new.
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded text-sm">
                   {error}
                 </div>
               )}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Enter your email
                 </label>
                 <input
@@ -86,13 +68,13 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="johndoe@maildomain"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Enter your Password
                 </label>
                 <div className="relative">
@@ -102,7 +84,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all pr-12"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all pr-10 sm:pr-12 text-sm sm:text-base"
                     required
                   />
                   <button
@@ -124,7 +106,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
@@ -132,9 +114,9 @@ export default function LoginPage() {
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Remember my account</span>
+                  <span className="ml-2 text-xs sm:text-sm text-gray-600">Remember my account</span>
                 </label>
-                <Link href="/auth/forgot-password" className="text-sm text-gray-600 hover:text-orange-500">
+                <Link href="/auth/forgot-password" className="text-xs sm:text-sm text-gray-600 hover:text-orange-500">
                   Forgot Password?
                 </Link>
               </div>
@@ -142,24 +124,24 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
+                className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-semibold py-2 sm:py-3 px-4 rounded-lg transition-colors duration-200 text-sm sm:text-base"
               >
                 {loading ? 'Logging in...' : 'Login'}
               </button>
             </form>
 
             {/* Social Login Section */}
-            <div className="mt-6">
+            <div className="mt-4 sm:mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
                 </div>
-                <div className="relative flex justify-center text-sm">
+                <div className="relative flex justify-center text-xs sm:text-sm">
                   <span className="px-2 bg-white text-gray-500">Or continue with</span>
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-3 gap-3">
+              <div className="mt-4 sm:mt-6 grid grid-cols-3 gap-2 sm:gap-3">
                 {/* Google Login */}
                 <button
                   type="button"
@@ -198,9 +180,9 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="mt-6 text-center">
-              <span className="text-gray-600">Don't have an account? </span>
-              <Link href="/auth/register" className="text-orange-500 hover:text-orange-600 font-medium">
+            <div className="mt-4 sm:mt-6 text-center">
+              <span className="text-xs sm:text-sm text-gray-600">Don't have an account? </span>
+              <Link href="/auth/register" className="text-xs sm:text-sm text-orange-500 hover:text-orange-600 font-medium">
                 Register Now
               </Link>
             </div>

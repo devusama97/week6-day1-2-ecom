@@ -22,6 +22,14 @@ interface DashboardData {
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const handleMenuClick = () => {
+    console.log('Menu clicked! Current state:', sidebarOpen);
+    setSidebarOpen(!sidebarOpen);
+    console.log('New state will be:', !sidebarOpen);
+  };
+  
   const [stats, setStats] = useState({
     totalOrders: { value: 0, change: 0 },
     activeOrders: { value: 0, change: 0 },
@@ -162,10 +170,10 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex min-h-screen bg-gray-50">
-        <AdminSidebar />
+        <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex-1 flex flex-col">
-          <AdminHeader />
-          <main className="flex-1 p-6">
+          <AdminHeader onMenuClick={handleMenuClick} />
+          <main className="flex-1 p-4 sm:p-6">
             <div className="bg-white rounded-lg border p-12 text-center">
               <p className="text-gray-500">Loading dashboard...</p>
             </div>
@@ -177,28 +185,28 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       <div className="flex-1 flex flex-col">
-        <AdminHeader />
+        <AdminHeader onMenuClick={handleMenuClick} />
         
-        <main className="flex-1 p-6">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <nav className="text-sm text-gray-500">
+        <main className="flex-1 p-4 sm:p-6">
+          <div className="mb-4 sm:mb-6">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
+            <nav className="text-xs sm:text-sm text-gray-500">
               Home &gt; Dashboard
             </nav>
           </div>
 
-          <div className="mb-6 flex justify-end">
-            <div className="bg-white px-4 py-2 rounded-lg border text-sm">
+          <div className="mb-4 sm:mb-6 flex justify-end">
+            <div className="bg-white px-3 sm:px-4 py-2 rounded-lg border text-xs sm:text-sm">
               📅 {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
             </div>
           </div>
 
           <StatsCards stats={stats} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
             <div className="lg:col-span-2">
               <SalesChart orders={allOrders} />
             </div>

@@ -20,10 +20,13 @@ export default function Toast({ message, type, onClose }: ToastProps) {
 
   return (
     <div className={`fixed top-4 right-4 z-50 transition-all duration-300 ${show ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
-      <div className={`px-6 py-4 rounded-lg shadow-lg ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+      <div className={`px-4 py-3 rounded-lg border ${
+        type === 'success' 
+          ? 'bg-white border-black text-black' 
+          : 'bg-white border-red-500 text-red-500'
+      }`}>
         <div className="flex items-center space-x-2">
-          <span className="text-lg">{type === 'success' ? '✅' : '❌'}</span>
-          <span className="font-medium">{message}</span>
+          <span className="text-sm font-medium">{message}</span>
         </div>
       </div>
     </div>

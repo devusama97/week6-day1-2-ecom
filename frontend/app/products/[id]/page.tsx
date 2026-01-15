@@ -9,6 +9,7 @@ import Newsletter from '../../../components/home/Newsletter';
 import Footer from '../../../components/common/Footer';
 import ProductCard from '../../../components/products/ProductCard';
 import ReviewForm from '../../../components/products/ReviewForm';
+import Toast from '../../../components/ui/Toast';
 import { useCart } from '../../../contexts/CartContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { productService } from '../../../services/productService';
@@ -31,6 +32,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [relatedLoading, setRelatedLoading] = useState(false);
+  const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
   useEffect(() => {
     fetchProduct();
@@ -104,6 +106,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         type: product.type || 'regular',
         pointsPrice: product.pointsPrice || 0
       }, quantity);
+      setToast({message: 'Added to cart successfully!', type: 'success'});
     }
   };
 
@@ -492,6 +495,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
       <Newsletter />
       <Footer />
+      
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

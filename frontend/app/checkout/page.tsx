@@ -15,7 +15,7 @@ import Toast from '../../components/ui/Toast';
 
 export default function CheckoutPage() {
   const { items, getTotalPrice, removeFromCart } = useCart();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState<string>('');
   const [showStripeForm, setShowStripeForm] = useState(false);
@@ -81,6 +81,11 @@ export default function CheckoutPage() {
   const handleStripeSuccess = async (paymentIntent: any) => {
     console.log('Stripe payment successful:', paymentIntent);
     try {
+      if (!shippingInfo.zipCode || !shippingInfo.firstName || !shippingInfo.address) {
+        alert('Shipping information is incomplete');
+        return;
+      }
+      
       const orderData: CreateOrderData = {
         items: items.map(item => ({
           product: item.id,
@@ -98,23 +103,18 @@ export default function CheckoutPage() {
         pointsUsed: usePoints ? pointsToUse : 0
       };
       
-      console.log('Creating order with data:', orderData);
       await orderService.createOrder(orderData);
-      console.log('Order created successfully');
+      await refreshUser();
       
       items.forEach(item => {
         removeFromCart(item.id, item.size, item.color);
       });
       
-      setToast({message: 'Order placed successfully!', type: 'success'});
-      
-      // Delay redirect to show toast
-      setTimeout(() => {
-        window.location.href = '/profile#order-history';
-      }, 2000);
+      localStorage.setItem('orderSuccess', 'true');
+      window.location.href = '/profile#order-history';
     } catch (error: any) {
       console.error('Order creation failed:', error);
-      alert('Order creation failed');
+      setToast({message: 'Order creation failed', type: 'error'});
     }
   };
 
@@ -123,6 +123,13 @@ export default function CheckoutPage() {
   };
 
   const initializeStripePayment = async () => {
+    // Validate shipping info before initializing payment
+    if (!shippingInfo.firstName || !shippingInfo.lastName || !shippingInfo.address || 
+        !shippingInfo.city || !shippingInfo.state || !shippingInfo.zipCode) {
+      alert('Please fill in all shipping information fields');
+      return;
+    }
+    
     try {
       console.log('Initializing Stripe payment with total:', total);
       setLoading(true);
@@ -184,15 +191,17 @@ export default function CheckoutPage() {
       };
       
       await orderService.createOrder(orderData);
-      setToast({message: 'Order placed successfully!', type: 'success'});
+      await refreshUser();
       
-      // Delay redirect to show toast
-      setTimeout(() => {
-        window.location.href = '/profile#order-history';
-      }, 2000);
+      items.forEach(item => {
+        removeFromCart(item.id, item.size, item.color);
+      });
+      
+      localStorage.setItem('orderSuccess', 'true');
+      window.location.href = '/profile#order-history';
     } catch (error: any) {
       console.error('Order creation failed:', error);
-      alert('Failed to place order. Please try again.');
+      setToast({message: 'Failed to place order', type: 'error'});
     } finally {
       setLoading(false);
     }

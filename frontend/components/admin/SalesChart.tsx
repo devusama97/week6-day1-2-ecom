@@ -129,6 +129,13 @@ export default function SalesChart({ orders }: SalesChartProps) {
         borderWidth: 1,
         cornerRadius: 8,
         displayColors: false,
+        padding: 8,
+        titleFont: {
+          size: 12,
+        },
+        bodyFont: {
+          size: 11,
+        },
         callbacks: {
           callback: function(context: any) {
             return `Revenue: PKR ${context.parsed.y.toLocaleString()}`;
@@ -147,8 +154,10 @@ export default function SalesChart({ orders }: SalesChartProps) {
         ticks: {
           color: '#6B7280',
           font: {
-            size: 12,
+            size: window.innerWidth < 640 ? 10 : 12,
           },
+          maxRotation: 45,
+          minRotation: 0,
         },
       },
       y: {
@@ -162,7 +171,7 @@ export default function SalesChart({ orders }: SalesChartProps) {
         ticks: {
           color: '#6B7280',
           font: {
-            size: 12,
+            size: window.innerWidth < 640 ? 10 : 12,
           },
           callback: function(value: any) {
             return 'PKR ' + value.toLocaleString();
@@ -174,13 +183,13 @@ export default function SalesChart({ orders }: SalesChartProps) {
 
   if (!orders || orders.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg border">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold">Sale Graph</h3>
-          <div className="flex space-x-2">
+      <div className="bg-white p-4 sm:p-6 rounded-lg border">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
+          <h3 className="text-base sm:text-lg font-semibold">Sale Graph</h3>
+          <div className="flex space-x-1 sm:space-x-2 w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('WEEKLY')}
-              className={`px-4 py-2 text-sm rounded ${
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
                 activeTab === 'WEEKLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -188,7 +197,7 @@ export default function SalesChart({ orders }: SalesChartProps) {
             </button>
             <button
               onClick={() => setActiveTab('MONTHLY')}
-              className={`px-4 py-2 text-sm rounded ${
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
                 activeTab === 'MONTHLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -196,7 +205,7 @@ export default function SalesChart({ orders }: SalesChartProps) {
             </button>
             <button
               onClick={() => setActiveTab('YEARLY')}
-              className={`px-4 py-2 text-sm rounded ${
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
                 activeTab === 'YEARLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -205,11 +214,11 @@ export default function SalesChart({ orders }: SalesChartProps) {
           </div>
         </div>
 
-        <div className="h-64 flex items-center justify-center">
+        <div className="h-48 sm:h-64 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-gray-400 text-4xl mb-4">📊</div>
-            <p className="text-gray-500 text-lg">No any sell yet</p>
-            <p className="text-gray-400 text-sm mt-2">Sales will appear here when orders are placed</p>
+            <div className="text-gray-400 text-2xl sm:text-4xl mb-4">📊</div>
+            <p className="text-gray-500 text-sm sm:text-lg">No any sell yet</p>
+            <p className="text-gray-400 text-xs sm:text-sm mt-2">Sales will appear here when orders are placed</p>
           </div>
         </div>
       </div>
@@ -217,13 +226,13 @@ export default function SalesChart({ orders }: SalesChartProps) {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg border">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold">Sale Graph</h3>
-        <div className="flex space-x-2">
+    <div className="bg-white p-4 sm:p-6 rounded-lg border">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
+        <h3 className="text-base sm:text-lg font-semibold">Sale Graph</h3>
+        <div className="flex space-x-1 sm:space-x-2 w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('WEEKLY')}
-            className={`px-4 py-2 text-sm rounded ${
+            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
               activeTab === 'WEEKLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -231,7 +240,7 @@ export default function SalesChart({ orders }: SalesChartProps) {
           </button>
           <button
             onClick={() => setActiveTab('MONTHLY')}
-            className={`px-4 py-2 text-sm rounded ${
+            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
               activeTab === 'MONTHLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -239,7 +248,7 @@ export default function SalesChart({ orders }: SalesChartProps) {
           </button>
           <button
             onClick={() => setActiveTab('YEARLY')}
-            className={`px-4 py-2 text-sm rounded ${
+            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm rounded ${
               activeTab === 'YEARLY' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -248,15 +257,15 @@ export default function SalesChart({ orders }: SalesChartProps) {
         </div>
       </div>
 
-      <div className="h-64">
+      <div className="h-48 sm:h-64">
         {salesData && salesData.values.length > 0 ? (
           <Line data={chartData} options={chartOptions} />
         ) : (
           <div className="h-full flex items-center justify-center">
             <div className="text-center">
-              <div className="text-gray-400 text-4xl mb-4">📊</div>
-              <p className="text-gray-500 text-lg">No sales data for this period</p>
-              <p className="text-gray-400 text-sm mt-2">Try selecting a different time period</p>
+              <div className="text-gray-400 text-2xl sm:text-4xl mb-4">📊</div>
+              <p className="text-gray-500 text-sm sm:text-lg">No sales data for this period</p>
+              <p className="text-gray-400 text-xs sm:text-sm mt-2">Try selecting a different time period</p>
             </div>
           </div>
         )}

@@ -8,6 +8,7 @@ import { userService, User } from '@/services/userService';
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState('');
@@ -77,10 +78,10 @@ export default function UsersPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       <div className="flex-1 flex flex-col">
-        <AdminHeader />
+        <AdminHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         
         <main className="flex-1 p-6">
           <div className="mb-6">

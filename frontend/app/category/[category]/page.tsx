@@ -16,6 +16,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
   const productsPerPage = 9;
 
   const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
@@ -138,12 +139,46 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
 
       <div className="px-4 py-8">
         <div className="max-w-7xl mx-auto flex gap-8">
-          <div className="w-80 flex-shrink-0">
-            <div className="border rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold">Filters</h3>
-                <button className="text-gray-400">☰</button>
-              </div>
+          {/* Mobile Filter Button */}
+          <button 
+            onClick={() => setShowFilters(true)}
+            className="lg:hidden fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-full shadow-lg z-40 flex items-center space-x-2"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 7H21M3 12H15M3 17H9" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+            <span>Filters</span>
+          </button>
+
+          {/* Filter Sidebar - Desktop always visible, Mobile overlay */}
+          <div className={`
+            fixed lg:static inset-0 z-50 lg:z-auto
+            ${showFilters ? 'block' : 'hidden lg:block'}
+          `}>
+            {/* Overlay for mobile */}
+            <div 
+              className="lg:hidden fixed inset-0 bg-black bg-opacity-50"
+              onClick={() => setShowFilters(false)}
+            />
+            
+            {/* Filter Panel */}
+            <div className="
+              fixed lg:static right-0 top-0 h-full lg:h-auto
+              w-80 lg:w-80 flex-shrink-0
+              bg-white overflow-y-auto
+              transform transition-transform duration-300
+              lg:transform-none
+            ">
+              <div className="border rounded-none lg:rounded-2xl p-6 h-full lg:h-auto">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold">Filters</h3>
+                  <button 
+                    onClick={() => setShowFilters(false)}
+                    className="lg:hidden text-gray-400 hover:text-black text-2xl"
+                  >
+                    ×
+                  </button>
+                </div>
 
               <div className="mb-6">
                 <div className="space-y-3">
@@ -233,26 +268,30 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                 </div>
               </div>
 
-              <button className="w-full bg-black text-white py-3 rounded-full">
+              <button 
+                onClick={() => setShowFilters(false)}
+                className="w-full bg-black text-white py-3 rounded-full"
+              >
                 Apply Filter
               </button>
             </div>
           </div>
+        </div>
 
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4">
               <div>
-                <h1 className="text-3xl font-bold mb-2">{categoryName}</h1>
-                <p className="text-gray-600">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">{categoryName}</h1>
+                <p className="text-sm sm:text-base text-gray-600">
                   Showing {startIndex + 1}-{Math.min(endIndex, products.length)} of {products.length} Products
                 </p>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">Sort by:</span>
+                <span className="text-xs sm:text-sm text-gray-600">Sort by:</span>
                 <select 
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="border border-gray-300 rounded px-3 py-2 text-sm"
+                  className="border border-gray-300 rounded px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm flex-1 sm:flex-none"
                 >
                   <option>Most Popular</option>
                   <option>Price: Low to High</option>
@@ -267,7 +306,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
               </div>
             ) : products.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-8">
                   {currentProducts.map((product) => (
                     <ProductCard 
                       key={product._id}

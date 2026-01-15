@@ -1,28 +1,59 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authService } from '../../../services/authService';
+import { useAuth } from '../../../contexts/AuthContext';
+import api from '../../../services/api';
 
 export default function AuthCallback() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshUser } = useAuth();
+  const [processed, setProcessed] = useState(false);
 
   useEffect(() => {
-    const token = searchParams.get('token');
+    if (processed) return;
     
-    if (token) {
-      // Store the token
-      localStorage.setItem('token', token);
+    const handleCallback = async () => {
+      const token = searchParams.get('token');
       
-      // Decode token to get user info (you might want to call a separate API)
-      // For now, we'll redirect and let the app handle authentication check
-      router.push('/');
-    } else {
-      // No token, redirect to login
-      router.push('/auth/login?error=oauth_failed');
-    }
-  }, [router, searchParams]);
+      if (token) {
+        try {
+          setProcessed(true);
+          
+          // Store token first
+          localStorage.setItem('token', token);
+          
+          // Fetch user data using the token
+          const response = await api.get('/auth/profile');
+          
+          // Extract actual user data from wrapped response
+          const userData = response.data?.data || response.data || response;
+          
+          // Store auth data
+          authService.setAuth(token, userData);
+          
+          // Refresh AuthContext and wait for it to complete
+          await refreshUser();
+          
+          // Small delay to ensure state is updated
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          // Navigate to home
+          router.push('/');
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          localStorage.removeItem('token');
+          router.push('/auth/login?error=oauth_failed');
+        }
+      } else {
+        router.push('/auth/login?error=oauth_failed');
+      }
+    };
+
+    handleCallback();
+  }, [router, searchParams, processed, refreshUser]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">

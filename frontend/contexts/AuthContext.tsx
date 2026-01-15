@@ -9,6 +9,8 @@ interface User {
   email: string;
   role: string;
   loyaltyPoints: number;
+  avatar?: string;
+  provider?: string;
 }
 
 interface AuthContextType {
@@ -17,6 +19,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
+  refreshUser: () => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,18 +47,67 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // }, []);
 
   useEffect(() => {
-    const token = authService.getToken();
-    const savedUser = authService.getUser();
-  
-    if (token && savedUser) {
-      setUser(savedUser);
-      setIsAuthenticated(true);
-    } else {
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-  
-    setLoading(false);
+    // Prevent hydration mismatch by running only on client
+    if (typeof window === 'undefined') return;
+    
+    let isMounted = true; // Prevent state updates if component unmounts
+    
+    const initAuth = async () => {
+      const token = authService.getToken();
+      const savedUser = authService.getUser();
+    
+      if (token) {
+        try {
+          // If we have a token but no user data, fetch it
+          if (!savedUser) {
+            const response = await fetch('http://localhost:4000/api/auth/profile', {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+            
+            if (response.ok && isMounted) {
+              const responseData = await response.json();
+              // Extract actual user data from wrapped response
+              const userData = responseData.data || responseData;
+              authService.setAuth(token, userData);
+              setUser(userData);
+              setIsAuthenticated(true);
+            } else if (isMounted) {
+              // Invalid token, clear it
+              authService.logout();
+              setUser(null);
+              setIsAuthenticated(false);
+            }
+          } else if (isMounted) {
+            // Handle wrapped user data
+            const userData = savedUser.data || savedUser;
+            setUser(userData);
+            setIsAuthenticated(true);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          if (isMounted) {
+            authService.logout();
+            setUser(null);
+            setIsAuthenticated(false);
+          }
+        }
+      } else if (isMounted) {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    
+      if (isMounted) {
+        setLoading(false);
+      }
+    };
+
+    initAuth();
+    
+    return () => {
+      isMounted = false; // Cleanup
+    };
   }, []);
   
 
@@ -63,14 +115,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response = await authService.login({ email, password });
     
     // Handle wrapped response from backend
-    const authData = response.data || response;
-    
-    console.log('Login response:', response);
-    console.log('Auth data:', authData);
+    const authData = (response as any).data || response;
     
     authService.setAuth(authData.access_token, authData.user);
     setUser(authData.user);
     setIsAuthenticated(true);
+  };
+
+  const refreshUser = async () => {
+    const token = authService.getToken();
+    
+    if (token) {
+      try {
+        const response = await fetch('http://localhost:4000/api/auth/profile', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const responseData = await response.json();
+          // Extract actual user data from wrapped response
+          const userData = responseData.data || responseData;
+          authService.setAuth(token, userData);
+          setUser(userData);
+          setIsAuthenticated(true);
+          return userData;
+        }
+      } catch (error) {
+        console.error('Error refreshing user data:', error);
+      }
+    }
+    return null;
   };
 
   const logout = () => {
@@ -87,7 +163,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       logout,
       isAuthenticated,
-      loading
+      loading,
+      refreshUser
     }}>
       {children}
     </AuthContext.Provider>

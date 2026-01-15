@@ -31,6 +31,7 @@ interface Order {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
@@ -205,10 +206,10 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       <div className="flex-1 flex flex-col">
-        <AdminHeader />
+        <AdminHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         
         <main className="flex-1 p-6">
           <div className="mb-6">

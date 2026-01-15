@@ -58,22 +58,8 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-4xl w-full flex">
-        {/* Left side - Image */}
-        <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-gray-800 to-gray-900 relative">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Image
-              src="/login-register.jpg"
-              alt="Shoe"
-              width={400}
-              height={300}
-              className="object-contain"
-            />
-          </div>
-        </div>
-
-        {/* Right side - Register Form */}
-        <div className="w-full md:w-1/2 p-8 md:p-12">
+      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-md w-full">
+        <div className="w-full p-8 md:p-12">
           <div className="max-w-md mx-auto">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account!</h1>
             <p className="text-gray-600 mb-8">

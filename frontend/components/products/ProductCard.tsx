@@ -43,8 +43,8 @@ export default function ProductCard({
     if (type === 'loyalty_only' && pointsPrice) {
       return (
         <div>
-          <span className="text-xl font-bold text-purple-600">{pointsPrice} Points</span>
-          <div className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full mt-1 inline-block">
+          <span className="text-base sm:text-xl font-bold text-purple-600">{pointsPrice} Points</span>
+          <div className="text-xs bg-purple-100 text-purple-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full mt-1 inline-block">
             Points Only
           </div>
         </div>
@@ -54,19 +54,19 @@ export default function ProductCard({
     if (type === 'hybrid' && pointsPrice) {
       return (
         <div>
-          <div className="flex items-center space-x-2 mb-1">
-            <span className="text-xl font-bold">${price}</span>
+          <div className="flex items-center space-x-1 sm:space-x-2 mb-1">
+            <span className="text-base sm:text-xl font-bold">${price}</span>
             {originalPrice && (
               <>
-                <span className="text-gray-500 line-through">${originalPrice}</span>
-                <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-sm">
+                <span className="text-gray-500 line-through text-xs sm:text-base">${originalPrice}</span>
+                <span className="bg-red-100 text-red-600 px-1 sm:px-2 py-0.5 sm:py-1 rounded text-xs">
                   -{discount}%
                 </span>
               </>
             )}
           </div>
-          <div className="text-sm text-purple-600 font-medium">OR {pointsPrice} Points</div>
-          <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full mt-1 inline-block">
+          <div className="text-xs sm:text-sm text-purple-600 font-medium">OR {pointsPrice} Points</div>
+          <div className="text-xs bg-blue-100 text-blue-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full mt-1 inline-block">
             Cash or Points
           </div>
         </div>
@@ -75,12 +75,12 @@ export default function ProductCard({
     
     // Regular product
     return (
-      <div className="flex items-center space-x-2">
-        <span className="text-xl font-bold">${price}</span>
+      <div className="flex items-center space-x-1 sm:space-x-2">
+        <span className="text-base sm:text-xl font-bold">${price}</span>
         {originalPrice && (
           <>
-            <span className="text-gray-500 line-through">${originalPrice}</span>
-            <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-sm">
+            <span className="text-gray-500 line-through text-xs sm:text-base">${originalPrice}</span>
+            <span className="bg-red-100 text-red-600 px-1 sm:px-2 py-0.5 sm:py-1 rounded text-xs">
               -{discount}%
             </span>
           </>
@@ -96,15 +96,17 @@ export default function ProductCard({
         alt={title} 
         width={250} 
         height={250} 
-        className="w-full aspect-square object-cover rounded-lg mb-4" 
+        className="w-full aspect-square object-cover rounded-lg mb-2 sm:mb-4" 
       />
       <div className="text-left">
-        <h4 className="font-semibold mb-2 capitalize">{title}</h4>
-        <div className="flex mb-2">
+        <h4 className="font-semibold mb-1 sm:mb-2 capitalize text-sm sm:text-base line-clamp-2">{title}</h4>
+        <div className="flex mb-1 sm:mb-2 text-xs sm:text-sm">
           <span>{renderStars(Math.floor(rating))}</span>
-          <span className="text-gray-500 ml-2">{rating}/5</span>
+          <span className="text-gray-500 ml-1 sm:ml-2">{rating}/5</span>
         </div>
-        {renderPrice()}
+        <div className="text-sm sm:text-base">
+          {renderPrice()}
+        </div>
       </div>
     </Link>
   );
