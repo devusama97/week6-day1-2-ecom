@@ -5,10 +5,11 @@ import { User, UserDocument } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HashUtil } from '../common/utils/hash.util';
+import { Role } from '../common/enums/role.enum';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     const hashedPassword = await HashUtil.hash(createUserDto.password);
@@ -33,11 +34,11 @@ export class UsersService {
 
     const searchQuery = search
       ? {
-          $or: [
-            { name: { $regex: search, $options: 'i' } },
-            { email: { $regex: search, $options: 'i' } },
-          ],
-        }
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } },
+        ],
+      }
       : {};
 
     const [users, totalUsers] = await Promise.all([
@@ -69,7 +70,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    if (user.role === 'superadmin') {
+    if (user.role === Role.SUPER_ADMIN) {
       throw new BadRequestException('Cannot block superadmin');
     }
     return user;
@@ -155,5 +156,9 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  async findAll(query?: any): Promise<UserDocument[]> {
+    return this.userModel.find(query || {}).exec();
   }
 }

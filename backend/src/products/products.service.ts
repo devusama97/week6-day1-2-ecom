@@ -7,7 +7,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) {}
+  private orderModel: any;
+  constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) { }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
     const product = new this.productModel(createProductDto);
@@ -16,11 +17,11 @@ export class ProductsService {
 
   async findAll(query?: any): Promise<Product[]> {
     const filter = { isActive: true };
-    
+
     if (query?.category) {
       filter['category'] = query.category;
     }
-    
+
     if (query?.isOnSale) {
       filter['isOnSale'] = query.isOnSale === 'true';
     }
@@ -51,7 +52,7 @@ export class ProductsService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-    
+
     if (product.stock < quantity) {
       throw new BadRequestException('Insufficient stock');
     }
@@ -81,7 +82,7 @@ export class ProductsService {
   async getTopSellingProducts(limit: number = 8): Promise<any[]> {
     try {
       console.log('Fetching top selling products...');
-      
+
       // Try the aggregation approach first
       let topSellingProducts = await this.productModel.aggregate([
         {
@@ -146,23 +147,23 @@ export class ProductsService {
       ]);
 
       console.log('Top selling products found:', topSellingProducts.length);
-      
+
       // If no results from aggregation, try alternative approach
       if (topSellingProducts.length === 0) {
         console.log('No results from aggregation, trying alternative approach...');
-        
+
         // Import Order model dynamically
         const { Order } = await import('../orders/entities/order.entity');
         const orderModel = this.orderModel || (await import('@nestjs/mongoose')).getModelToken(Order.name);
-        
+
         // Get all orders and manually count
         const orders = await this.orderModel.db.collection('orders').find({}).toArray();
         console.log('Total orders found:', orders.length);
-        
+
         if (orders.length > 0) {
           // Count products manually
           const productCounts = new Map<string, number>();
-          
+
           orders.forEach(order => {
             if (order.items && Array.isArray(order.items)) {
               order.items.forEach(item => {
@@ -172,21 +173,21 @@ export class ProductsService {
               });
             }
           });
-          
+
           // Get top products
           const sortedProducts = Array.from(productCounts.entries())
             .sort((a, b) => b[1] - a[1])
             .slice(0, limit);
-          
+
           console.log('Manual count results:', sortedProducts.length);
-          
+
           // Fetch product details
           const productIds = sortedProducts.map(([id]) => id);
           topSellingProducts = await this.productModel.find({
             _id: { $in: productIds },
             isActive: true
           }).exec();
-          
+
           // Sort by the manual count order
           topSellingProducts.sort((a, b) => {
             const aCount = productCounts.get(a._id.toString()) || 0;
@@ -195,7 +196,7 @@ export class ProductsService {
           });
         }
       }
-      
+
       return topSellingProducts;
     } catch (error) {
       console.error('Error fetching top selling products:', error);

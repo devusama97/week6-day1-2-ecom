@@ -86,6 +86,9 @@ export class Order {
 
   @Prop({ default: 'pending' }) // pending, paid, failed
   paymentStatus: string;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

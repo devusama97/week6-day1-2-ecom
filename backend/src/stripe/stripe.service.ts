@@ -7,7 +7,7 @@ export class StripeService {
 
   constructor() {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
+      apiVersion: '2025-12-15.clover',
     });
   }
 
@@ -21,7 +21,7 @@ export class StripeService {
           enabled: true,
         },
       });
-      
+
       return paymentIntent;
     } catch (error) {
       console.error('Payment Intent creation error:', error);
@@ -32,7 +32,7 @@ export class StripeService {
   async createCheckoutSession(items: any[], successUrl: string, cancelUrl: string, shippingInfo?: any) {
     try {
       console.log('Creating Stripe session with items:', items);
-      
+
       const lineItems = items.map(item => ({
         price_data: {
           currency: 'usd',
@@ -66,11 +66,11 @@ export class StripeService {
       }
 
       console.log('Session config:', sessionConfig);
-      
+
       const session = await this.stripe.checkout.sessions.create(sessionConfig);
-      
+
       console.log('Created session:', { id: session.id, url: session.url });
-      
+
       return session;
     } catch (error) {
       console.error('Stripe session creation error:', error);
