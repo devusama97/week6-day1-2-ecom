@@ -21,6 +21,9 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "test-server.ts",
     "dist",
