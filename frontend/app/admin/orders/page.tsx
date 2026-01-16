@@ -44,7 +44,7 @@ export default function AdminOrdersPage() {
       setLoading(true);
       const token = localStorage.getItem('token');
 
-      const response = await fetch('http://localhost:4000/api/orders', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/orders`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ export default function AdminOrdersPage() {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`http://localhost:4000/api/orders/${orderId}/status`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

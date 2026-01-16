@@ -32,10 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // useEffect(() => {
   //   const token = authService.getToken();
   //   const savedUser = authService.getUser();
-    
+
   //   console.log('AuthContext - Token:', token);
   //   console.log('AuthContext - Saved user:', savedUser);
-    
+
   //   if (token && savedUser) {
   //     setUser(savedUser);
   //     setIsAuthenticated(true);
@@ -49,23 +49,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Prevent hydration mismatch by running only on client
     if (typeof window === 'undefined') return;
-    
+
     let isMounted = true; // Prevent state updates if component unmounts
-    
+
     const initAuth = async () => {
       const token = authService.getToken();
       const savedUser = authService.getUser();
-    
+
       if (token) {
         try {
           // If we have a token but no user data, fetch it
           if (!savedUser) {
-            const response = await fetch('http://localhost:4000/api/auth/profile', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/auth/profile`, {
               headers: {
                 'Authorization': `Bearer ${token}`,
               },
             });
-            
+
             if (response.ok && isMounted) {
               const responseData = await response.json();
               // Extract actual user data from wrapped response
@@ -97,26 +97,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setIsAuthenticated(false);
       }
-    
+
       if (isMounted) {
         setLoading(false);
       }
     };
 
     initAuth();
-    
+
     return () => {
       isMounted = false; // Cleanup
     };
   }, []);
-  
+
 
   const login = async (email: string, password: string) => {
     const response = await authService.login({ email, password });
-    
+
     // Handle wrapped response from backend
     const authData = (response as any).data || response;
-    
+
     authService.setAuth(authData.access_token, authData.user);
     setUser(authData.user);
     setIsAuthenticated(true);
@@ -124,15 +124,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUser = async () => {
     const token = authService.getToken();
-    
+
     if (token) {
       try {
-        const response = await fetch('http://localhost:4000/api/auth/profile', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/auth/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
-        
+
         if (response.ok) {
           const responseData = await response.json();
           // Extract actual user data from wrapped response
@@ -155,7 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(false);
     window.location.href = '/auth/login';
   };
-  
+
 
   return (
     <AuthContext.Provider value={{

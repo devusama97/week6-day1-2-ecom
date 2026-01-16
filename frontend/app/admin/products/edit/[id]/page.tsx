@@ -43,7 +43,7 @@ export default function ProductDetailPage() {
   const fetchProduct = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/products/${productId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/products/${productId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -99,7 +99,7 @@ export default function ProductDetailPage() {
         formData.append('images', image);
       });
 
-      const response = await fetch(`http://localhost:4000/api/products/${productId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/products/${productId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -132,7 +132,7 @@ export default function ProductDetailPage() {
     setDeleting(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/products/${productId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/products/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

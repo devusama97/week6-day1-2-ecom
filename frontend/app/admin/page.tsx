@@ -55,7 +55,7 @@ export default function AdminDashboard() {
         return;
       }
 
-      const response = await fetch('http://localhost:4000/api/admin/dashboard', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/admin/dashboard`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export default function AdminDashboard() {
         // Store all orders for SalesChart (need to fetch all orders)
         // For now, we'll fetch all orders separately for the chart
         try {
-          const allOrdersResponse = await fetch('http://localhost:4000/api/orders', {
+          const allOrdersResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/orders`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

@@ -139,7 +139,7 @@ export default function AddProductPage() {
       // Auth token
       const token = localStorage.getItem('token');
 
-      const res = await fetch('http://localhost:4000/api/products', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/products`, {
         method: 'POST',
         headers: {
           ...(token && { Authorization: `Bearer ${token}` }),

@@ -9,7 +9,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
     super({
       clientID: configService.get('DISCORD_CLIENT_ID'),
       clientSecret: configService.get('DISCORD_CLIENT_SECRET'),
-      callbackURL: 'http://localhost:4000/api/auth/discord/callback',
+      callbackURL: configService.get('DISCORD_CALLBACK_URL') || 'https://week6-day1-2-ecom.onrender.com/api/auth/discord/callback',
       scope: ['identify', 'email'],
     });
   }

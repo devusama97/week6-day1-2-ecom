@@ -15,12 +15,12 @@
 //       headers: getAuthHeaders(),
 //       body: JSON.stringify(data),
 //     });
-    
+
 //     if (!response.ok) {
 //       const error = await response.json();
 //       throw new Error(error.message || 'Something went wrong');
 //     }
-    
+
 //     return response.json();
 //   },
 
@@ -29,12 +29,12 @@
 //       method: 'GET',
 //       headers: getAuthHeaders(),
 //     });
-    
+
 //     if (!response.ok) {
 //       const error = await response.json();
 //       throw new Error(error.message || 'Something went wrong');
 //     }
-    
+
 //     return response.json();
 //   }
 // };
@@ -42,8 +42,8 @@
 
 
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api';
 
 const getAuthHeaders = () => {
   if (typeof window === 'undefined') return {};
@@ -68,7 +68,7 @@ const api = {
     } catch {
       data = { message: 'Invalid response format' };
     }
-    
+
     if (!res.ok) {
       // Handle 403 Forbidden specifically
       if (res.status === 403) {
@@ -97,7 +97,7 @@ const api = {
     } catch {
       data = { message: 'Invalid response format' };
     }
-    
+
     if (!res.ok) {
       // Handle 403 Forbidden specifically
       if (res.status === 403) {
@@ -126,7 +126,7 @@ const api = {
     } catch {
       data = { message: 'Invalid response format' };
     }
-    
+
     if (!res.ok) {
       // Handle 403 Forbidden specifically
       if (res.status === 403) {

@@ -28,15 +28,15 @@ export default function NewArrivals() {
 
   const fetchNewArrivals = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/products');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://week6-day1-2-ecom.onrender.com/api'}/products`);
       if (response.ok) {
         const result = await response.json();
         const productsData = result.data || result;
         // Sort by creation date (newest first) and take latest products
-        const sortedProducts = Array.isArray(productsData) 
-          ? productsData.sort((a: Product, b: Product) => 
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            )
+        const sortedProducts = Array.isArray(productsData)
+          ? productsData.sort((a: Product, b: Product) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
           : [];
         setProducts(sortedProducts);
       }
@@ -61,7 +61,7 @@ export default function NewArrivals() {
     return (
       <section className="px-4 py-8 sm:py-12 lg:py-16">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center mb-8 lg:mb-12" style={{fontFamily: 'Integral CF, sans-serif'}}>NEW ARRIVALS</h3>
+          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center mb-8 lg:mb-12" style={{ fontFamily: 'Integral CF, sans-serif' }}>NEW ARRIVALS</h3>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-gray-200 animate-pulse rounded-lg h-64 sm:h-80"></div>
@@ -75,7 +75,7 @@ export default function NewArrivals() {
   return (
     <section className="px-4 py-8 sm:py-12 lg:py-16">
       <div className="max-w-7xl mx-auto">
-        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center mb-8 lg:mb-12" style={{fontFamily: 'Integral CF, sans-serif'}}>NEW ARRIVALS</h3>
+        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center mb-8 lg:mb-12" style={{ fontFamily: 'Integral CF, sans-serif' }}>NEW ARRIVALS</h3>
         {products.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500">No products available</p>
@@ -84,15 +84,15 @@ export default function NewArrivals() {
           <>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {displayedProducts.map((product) => (
-                <ProductCard 
-                  key={product._id} 
+                <ProductCard
+                  key={product._id}
                   id={product._id}
                   image={product.images?.[0] || '/placeholder.png'}
                   title={product.name}
                   rating={4.5}
                   price={product.isOnSale && product.salePrice ? product.salePrice : product.price}
                   originalPrice={product.isOnSale && product.salePrice ? product.price : undefined}
-                  discount={product.isOnSale && product.salePrice ? 
+                  discount={product.isOnSale && product.salePrice ?
                     Math.round(((product.price - product.salePrice) / product.price) * 100) : undefined
                   }
                   pointsPrice={product.pointsPrice}
@@ -101,7 +101,7 @@ export default function NewArrivals() {
               ))}
             </div>
             <div className="text-center mt-6 sm:mt-8">
-              <button 
+              <button
                 onClick={handleViewAll}
                 className="border border-gray-300 px-6 sm:px-8 py-2 sm:py-3 rounded-full hover:bg-gray-50 text-sm sm:text-base w-full sm:w-auto"
               >
